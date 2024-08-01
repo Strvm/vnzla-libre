@@ -1,3 +1,5 @@
+"""VoteCounter class to count votes from a json file or a string."""
+
 import json
 
 CANDIDATE_INDEXES = [
@@ -15,12 +17,26 @@ CANDIDATE_INDEXES = [
 
 
 class VoteCounter:
-    def count(self, json_data_file_path):
-        with open(json_data_file_path) as json_data_file:
+    """VoteCounter class to count votes from a json file or a string"""
+
+    def count(self, json_data_file_path: str) -> dict:
+        """Count votes from a json file
+        Args:
+            json_data_file_path: Path to the json file with the votes data
+        Returns:
+            A dictionary with the votes for each candidate
+        """
+        with open(json_data_file_path, encoding="UTF-8") as json_data_file:
             data = json.load(json_data_file)
             return self._count_votes(data)
 
-    def count_from_string(self, data_string):
+    def count_from_string(self, data_string: str) -> dict:
+        """Count votes from a string
+        Args:
+            data_string: String with the votes data
+        Returns:
+            A dictionary with the votes for each candidate
+        """
         vote_data = data_string.split("!")[1]
         vote_numbers = list(map(int, vote_data.split(",")))
         votes = {candidate: 0 for candidate in self.get_candidates()}
@@ -33,7 +49,13 @@ class VoteCounter:
 
         return votes
 
-    def _count_votes(self, data):
+    def _count_votes(self, data) -> dict:
+        """Count votes from a list of votes data
+        Args:
+            data: List of votes data
+        Returns:
+            A dictionary with the votes for each candidate
+        """
         votes = {candidate: 0 for candidate in self.get_candidates()}
 
         for vote in data:
@@ -49,14 +71,15 @@ class VoteCounter:
         return votes
 
     @staticmethod
-    def get_candidates():
+    def get_candidates() -> list:
+        """Get the list of candidates"""
         return [list(candidate_dict.keys())[0] for candidate_dict in CANDIDATE_INDEXES]
 
 
 if __name__ == "__main__":
     # Example usage
     vote_counter = VoteCounter()
-    votes = vote_counter.count("qr_data.json")
+    votes = vote_counter.count("outputs/qr_data.json")
     print(votes)
     total_votes = sum(votes.values())
     print(total_votes)
